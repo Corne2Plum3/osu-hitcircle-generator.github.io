@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- common to all pages -->
+	<meta charset="utf-8">
+	<link href="style.css" rel="stylesheet" type="text/css">
+	<link rel="icon" type="image/png" sizes="64x64" href="img/icon64.png"> <!-- icon -->
+	<title>osu! hitcircle generator</title>
+	<div class="top_container">
+		<div class="top_container_logo"><img src="img/icon64.png" alt="" width="42"></div>
+		<div class="top_container_title">osu! hitcircle generator</div>
+		<!-- don't put <a> on the current page, put the <span class="top_container_current_option"> -->
+		<!-- <span> in the <div>, the <a> out the <div> -->
+		<div class="top_container_option"><span class="top_container_current_option">Editor</span></div>
+		<a href="help.html"><div class="top_container_option">Help</div></a>
+		<a href="about.html"><div class="top_container_option">About</div></a>
+	</div>
+	<div style="height: 58px;"></div> <!-- Placeholder to avoid to hide elements with top_container -->
+	
+	<script src="js/app.js" type="text/javascript"></script>
+	<script src="js/FileSaver.js" type="text/javascript"></script>
+	<script src="js/jszip.js" type="text/javascript"></script>
+</head>
+<body>
+	<div id="editor_top">
+		<div class="editor_container_textbox">
+			Skin name: <input type="text" id="skin_name_input" placeholder="Type the skin name" onchange="update_all(0);" class="editor_input_text">
+		</div>
+		<div class="editor_container_textbox">
+			Author: <input type="text" id="author_name_input" placeholder="Type your name" onchange="update_all(0);" class="editor_input_text">
+		</div>
+		<div class="editor_container_3">
+			<input type="button" value="Reset" onclick="reset_editor(true);" class="reset_button">
+			<!--<input type="button" value="Draw test" onclick="update_all(1);">-->
+		</div>
+	</div>
+	<div id="editor">
+		<div id="editor_view"> <!-- Displays the canvas & "display" settings -->
+			<div>
+				<canvas id="hitcircle_preview" width="288" height="288">Can't display canvas :( </canvas>
+			</div>
+			<div class="view_settings"> <!-- Set the preview -->
+				<div class="view_settings_color">
+					Color: <input type="color" id="display_color" value="#33FF99" onchange="update_all(0);" class="view_combo_color_input">
+				</div>
+				<div class="view_settings_number">
+					Number: <input type="number" id="display_number" min="1" max="999999" step="1" onchange="update_all(0);" class="view_combo_number_input">
+				</div>
+				<div class="view_settings_background">
+					Background:
+					<select name="display_background" id="display_background" onchange="update_all(0);" class="editor_input_select">
+						<option value="0">100% black</option>
+						<option value="1">Dark</option>
+						<option value="2">Gray</option>
+						<option value="3">Light</option>
+						<option value="4">100% white</option>
+					</select>
+				</div>
+			</div>
+			<div class="view_combo_color"> <!-- Where there is all of the custom color -->
+				Combo colors
+				<div class="view_combo_all"> <!-- The box with all view_combo_1 <div> -->
+					<div id="custom_color_1" class="view_combo_1"> <!-- Color picker + button to choose this color to display (note: 1 = one color) -->
+						<div><input type="color" id="combo_1_color" value="#33FF99" onchange="update_all(1);" class="view_custom_color_change"></div>
+						<div><input type="button" id="combo_1_button" value="Choose" onclick="set_display_color_combo(1);" class="view_custom_color_set"></div>
+					</div>
+					<div id="custom_color_2" class="view_combo_1"> <!-- Color picker + button to choose this color to display (note: 1 = one color) -->
+						<div><input type="color" id="combo_2_color" value="#33FF99" onchange="update_all(1);" class="view_custom_color_change"></div>
+						<div><input type="button" id="combo_2_button" value="Choose" onclick="set_display_color_combo(2);" class="view_custom_color_set"></div>
+					</div>
+					<div id="custom_color_3" class="view_combo_1"> <!-- Color picker + button to choose this color to display (note: 1 = one color) -->
+						<div><input type="color" id="combo_3_color" value="#33FF99" onchange="update_all(1);" class="view_custom_color_change"></div>
+						<div><input type="button" id="combo_3_button" value="Choose" onclick="set_display_color_combo(3);" class="view_custom_color_set"></div>
+					</div>
+					<div id="custom_color_4" class="view_combo_1"> <!-- Color picker + button to choose this color to display (note: 1 = one color) -->
+						<div><input type="color" id="combo_4_color" value="#33FF99" onchange="update_all(1);" class="view_custom_color_change"></div>
+						<div><input type="button" id="combo_4_button" value="Choose" onclick="set_display_color_combo(4);" class="view_custom_color_set"></div>
+					</div>
+					<div id="custom_color_5" class="view_combo_1"> <!-- Color picker + button to choose this color to display (note: 1 = one color) -->
+						<div><input type="color" id="combo_5_color" value="#33FF99" onchange="update_all(1);" class="view_custom_color_change"></div>
+						<div><input type="button" id="combo_5_button" value="Choose" onclick="set_display_color_combo(5);" class="view_custom_color_set"></div>
+					</div>
+					<div id="custom_color_6" class="view_combo_1"> <!-- Color picker + button to choose this color to display (note: 1 = one color) -->
+						<div><input type="color" id="combo_6_color" value="#33FF99" onchange="update_all(1);" class="view_custom_color_change"></div>
+						<div><input type="button" id="combo_6_button" value="Choose" onclick="set_display_color_combo(6);" class="view_custom_color_set"></div>
+					</div>
+					<div id="custom_color_7" class="view_combo_1"> <!-- Color picker + button to choose this color to display (note: 1 = one color) -->
+						<div><input type="color" id="combo_7_color" value="#33FF99" onchange="update_all(1);" class="view_custom_color_change"></div>
+						<div><input type="button" id="combo_7_button" value="Choose" onclick="set_display_color_combo(7);" class="view_custom_color_set"></div>
+					</div>
+					<div id="custom_color_8" class="view_combo_1"> <!-- Color picker + button to choose this color to display (note: 1 = one color) -->
+						<div><input type="color" id="combo_8_color" value="#33FF99" onchange="update_all(1);" class="view_custom_color_change"></div>
+						<div><input type="button" id="combo_8_button" value="Choose" onclick="set_display_color_combo(8);" class="view_custom_color_set"></div>
+					</div>
+				</div>
+				<div class="view_number_combo_color">
+					<div><input type="button" id="remove_combo_color" value="Remove color"  onclick="set_amount_combo_colors(-1); update_all(1);" class="view_set_number_colors"></div>
+					<div><input type="button" id="add_combo_color" value="Add color"  onclick="set_amount_combo_colors(1); update_all(1);" class="view_set_number_colors"></div>
+				</div>
+			</div>
+			<div class="view_skin_ini"> <!-- Where there is a part of the skin.ini -->
+				skin.ini
+				<div class="view_skin_ini_content" id="skin_ini_content">
+					<div>[General]</div>
+					<div>Name: <span id="ini_Name_value">???</span></div>
+					<div>Author: <span id="ini_Author_value">???</span></div>
+					<div>Version: <span id="ini_Version_value">???</span></div>
+					<div>HitCircleOverlayAboveNumber: <span id="ini_HitCircleOverlayAboveNumer_value">???</span></div>
+					<div>&#x2003;</div>
+					<div>[Colours]</div>
+					<div id="ini_Color1">Color1: <span id="ini_Color1_value">???</span></div>
+					<div id="ini_Color2">Color2: <span id="ini_Color2_value">???</span></div>
+					<div id="ini_Color3">Color3: <span id="ini_Color3_value">???</span></div>
+					<div id="ini_Color4">Color4: <span id="ini_Color4_value">???</span></div>
+					<div id="ini_Color5">Color5: <span id="ini_Color5_value">???</span></div>
+					<div id="ini_Color6">Color6: <span id="ini_Color6_value">???</span></div>
+					<div id="ini_Color7">Color7: <span id="ini_Color7_value">???</span></div>
+					<div id="ini_Color8">Color8: <span id="ini_Color8_value">???</span></div>
+					<div>&#x2003;</div> <!-- the &#x2003; is just a placeholder to make a empty line -->
+					<div>[Fonts]</div>
+					<div>HitCirclePrefix: <span id="ini_HitCirclePrefix_value">???</span></div>
+					<div>HitCircleOverlap: <span id="ini_HitCircleOverlap_value">???</span></div>
+				</div>
+			</div>
+		</div>
+		<div id="editor_controls"> <!-- Where you custom the hitcircle (all input sizes are for 1x) -->
+			<!-- Notes about <span> and update_all(n):
+				1. update_all(n) draw all files and preview.
+				2. Elements in <span> can be disabled and their opacity set.
+				3. If n=1, then the program will disabled useless inputs.
+				4. n=1 for elements who can make inputs useful/useless (checkbuttons & selects)
+			-->
+			<details open> <!-- Overlay section -->
+				<summary>Overlay</summary>
+				<div class="editor_section"> <!-- All content of the spoiler should be in this <div> -->
+					<div class="editor_part">
+						Overlay properties
+						<div class="editor_content">
+							Border size: <input type="number" id="overlay_border_size" min="1" max="100" step="1" onchange="update_all(0);" class="editor_input_number" required><br/>
+							3d effect:
+							<select name="overlay_3d_effect" id="overlay_3d_effect" onchange="update_all(0);" class="editor_input_select">
+								<option value="0">None</option>
+								<option value="1">Style 1</option>
+								<option value="2">Style 2</option>
+								<option value="3">Style 3</option>
+								<option value="4">Style 4</option>
+								<option value="5">Style 5</option>
+							</select>
+						</div>
+					</div>
+					<div class="editor_part">
+						Overlay color
+						<div class="editor_content">
+							<select name="overlay_gradient_style" id="overlay_gradient_style" onchange="update_all(1);" class="editor_input_select">
+								<option value="none">No gradient</option>
+								<option value="linear">Linear</option>
+								<option value="radial">Radial</option>
+							</select>
+							<span id="span_overlay_GD"><input type="number" id="overlay_gradient_direction" min="-360" max="360" step="1" onchange="update_all(0);" class="editor_input_number" required>°</span><br/>
+							<input type="color" id="overlay_color_1" class="editor_input_color" onchange="update_all(0);">   Opacity: <input type="number" id="overlay_alpha_1" min="0" max="100" step="1" onchange="update_all(0);" class="editor_input_number" required>%<br/>
+							<span id="span_overlay_CA2"><input type="color" id="overlay_color_2" onchange="update_all(0);" class="editor_input_color">   Opacity: <input type="number" id="overlay_alpha_2" min="0" max="100" step="1" onchange="update_all(0);" class="editor_input_number" required>%</span>
+						</div>
+					</div>
+					<div class="editor_part">
+						Overlay shadow
+						<div class="editor_content">
+							<select name="overlay_shadow_style" id="overlay_shadow_style" onchange="update_all(1);" class="editor_input_select">
+								<option value="none">No shadow</option>
+								<option value="out">Shadow out</option>
+								<option value="in/out">Shadow in/out</option>
+							</select><br/>
+							<span id="span_overlay_SH">Shadow blur: <input type="number" id="overlay_shadow_blur" min="0" max="100" step="1" onchange="update_all(0);" class="editor_input_number" required><br/>
+							<input type="color" id="overlay_shadow_color" value="#000000" onchange="update_all(0);" class="editor_input_color">   Opacity: <input type="number" id="overlay_shadow_alpha" min="0" max="100" step="1" onchange="update_all(0);" class="editor_input_number" required>%</span>
+						</div>
+					</div>
+				</div>
+			</details>
+			<details open> <!-- Colored part section -->
+				<summary>Colored part</summary>
+				<div class="editor_section"> <!-- All content of the spoiler should be in this <div> -->
+					<div class="editor_part">
+						Background
+						<div class="editor_content">
+							<select name="background_gradient_style" id="background_gradient_style" onchange="update_all(1);" class="editor_input_select">
+								<option value="none">No gradient</option>
+								<option value="linear">Linear</option>
+								<option value="radial">Radial</option>
+							</select>
+							<span id="span_background_GD"><input type="number" id="background_gradient_direction" min="-360" max="360" step="1" onchange="update_all(0);" class="editor_input_number" required>°</span><br/>
+							<input type="color" id="background_color_1" value="#333333" onchange="update_all(0);" class="editor_input_color">   Opacity: <input type="number" id="background_alpha_1" min="0" max="100" step="1" onchange="update_all(0);" class="editor_input_number" required>%<br/>
+							<span id="span_background_CA2"><input type="color" id="background_color_2" value="#555555" onchange="update_all(0);" class="editor_input_color">   Opacity: <input type="number" id="background_alpha_2" min="0" max="100" step="1" onchange="update_all(0);" class="editor_input_number" required>%</span>
+						</div>
+					</div>
+					<div class="editor_part">
+						Circle glow
+						<div class="editor_content">
+							<select name="background_shadow_style" id="background_shadow_style" onchange="update_all(1);" class="editor_input_select">
+								<option value="none">No glow</option>
+								<option value="out">Glow out</option>
+							</select><br/>
+							<span id="span_background_SH">Glow blur: <input type="number" id="background_shadow_blur" min="0" max="100" step="1" onchange="update_all(0);" class="editor_input_number" required><br/>
+							<input type="color" id="background_shadow_color" value="#FFFFFF" onchange="update_all(0);" class="editor_input_color">   Opacity: <input type="number" id="background_shadow_alpha" min="0" max="100" step="1" onchange="update_all(0);" class="editor_input_number" required>%</span>
+							<!-- I know IDs aren't accurate but seems more logical in the JS -->
+						</div>
+					</div>
+					<div class="editor_part">
+						Ring properties
+						<div class="editor_content">
+							<input type="checkbox" id="ring_enabled" onchange="update_all(1);">Draw the ring<br/>
+							Ring size: <input type="number" id="ring_size" min="0" max="255" step="1" onchange="update_all(0);" class="editor_input_number" required><br/>
+							Ring border size: <input type="number" id="ring_border_size" min="1" max="128" step="1" onchange="update_all(0);" class="editor_input_number" required>
+						</div>
+					</div>
+					<div class="editor_part">
+						Ring color
+						<div class="editor_content">
+							<select name="ring_gradient_style" id="ring_gradient_style" onchange="update_all(1);" class="editor_input_select">
+								<option value="none">No gradient</option>
+								<option value="linear">Linear</option>
+								<option value="radial">Radial</option>
+							</select>
+							<span id="span_ring_GD"><input type="number" id="ring_gradient_direction" min="-360" max="360" step="1" onchange="update_all(0);" class="editor_input_number" required>°</span><br/>
+							<input type="color" id="ring_color_1" value="#eeeeee" onchange="update_all(0);" class="editor_input_color">   Opacity: <input type="number" id="ring_alpha_1" min="0" max="100" step="1" onchange="update_all(0);" class="editor_input_number" required>%<br/>
+							<span id="span_ring_CA2"><input type="color" id="ring_color_2" value="#d0d0d0" onchange="update_all(0);" class="editor_input_color">   Opacity: <input type="number" id="ring_alpha_2" min="0" max="100" step="1" onchange="update_all(0);" class="editor_input_number" required>%</span>
+						</div>
+					</div>
+				</div>
+			</details>
+			<details open> <!-- Numbers section -->
+				<summary>Numbers</summary>
+				<div class="editor_section"> <!-- All content of the spoiler should be in this <div> -->
+					<div class="editor_part">
+						Font
+						<div class="editor_content">
+							Font: <input type="text" id="numbers_font_name" onchange="update_all(0);" class="editor_input_text"><br/>
+							Font size: <input type="number" id="numbers_font_size" min="0" max="255" step="1" onchange="update_all(0);" class="editor_input_number" required><br/>
+							<input type="checkbox" id="numbers_behind_overlay" onchange="update_all(1);" checked>Numbers behind overlay
+						</div>
+					</div>
+					<div class="editor_part">
+						Font position
+						<div class="editor_content">
+							<input type="checkbox" id="numbers_font_monospaced" onchange="update_all(1);">Monospaced font<br/>
+							Font spacing: <input type="number" id="numbers_spacing" min="-128" max="128" step="0" onchange="update_all(0);"class="editor_input_number" required><br/>
+							Vertical adjust: <input type="number" id="numbers_correction_y" min="-100" max="100" step="1" onchange="update_all(0);" class="editor_input_number" required>
+						</div>
+					</div>
+					<div class="editor_part">
+						Font color
+						<div class="editor_content">
+							<select name="numbers_gradient_style" id="numbers_gradient_style" onchange="update_all(1);" class="editor_input_select">
+								<option value="none">No gradient</option>
+								<option value="linear">Linear</option>
+								<option value="radial">Radial</option>
+							</select>
+							<span id="span_numbers_GD"><input type="number" id="numbers_gradient_direction" min="-360" max="360" step="1" onchange="update_all(0);" class="editor_input_number">°</span><br/>
+							<input type="color" id="numbers_color_1" value="#ffffff" onchange="update_all(0);" class="editor_input_color">   Opacity: <input type="number" id="numbers_alpha_1" min="0" max="100" step="1" onchange="update_all(0);" class="editor_input_number">%<br/>
+							<span id="span_numbers_CA2"><input type="color" id="numbers_color_2" value="#dddddd" onchange="update_all(0);" class="editor_input_color">   Opacity: <input type="number" id="numbers_alpha_2" min="0" max="100" step="1" onchange="update_all(0);" class="editor_input_number">%</span>
+						</div>
+					</div>
+					<div class="editor_part">
+						Font shadow
+						<div class="editor_content">
+							<select name="numbers_shadow_style" id="numbers_shadow_style" onchange="update_all(1);" class="editor_input_select">
+								<option value="none">No shadow</option>
+								<option value="out">Shadow out</option>
+							</select><br/>
+							<span id="span_numbers_SH">Shadow blur: <input type="number" id="numbers_shadow_blur" min="0" max="100" step="1" onchange="update_all(0);" class="editor_input_number" required><br/>
+							<input type="color" id="numbers_shadow_color" value="#000000" onchange="update_all(0);" class="editor_input_color">   Opacity: <input type="number" id="numbers_shadow_alpha" min="0" max="100" step="1" onchange="update_all(0);" class="editor_input_number" required>%</span>
+						</div>
+					</div>
+				</div>
+			</details>
+		</div>
+	</div>
+	
+	<div class="export_settings"> <!-- where you can generate the file -->
+		Export settings
+		<div class="export_option"><input type="checkbox" id="export_skin_ini">Export skin.ini</div>
+		<div class="export_option"><input type="checkbox" id="export_as_slider_circle">Export as slider circle</div>
+		<div class="export_option"><input type="checkbox" id="circle_at_sliderend">Circles at sliders end</div>
+		<div class="export_option"><input type="button" value="Export as ZIP file" onclick="export_hitcircles();" class="export_button"></div>
+	</div>
+	
+	<div id="all_canvas_files"> <!-- All files here ^^ -->
+		<p>Standard files:</p>
+		<canvas id="hitcircle" width="128" height="128"></canvas>
+		<canvas id="hitcircleoverlay" width="128" height="128"></canvas>
+		<canvas id="default_0" width="40" height="128"></canvas>
+		<canvas id="default_1" width="40" height="128"></canvas>
+		<canvas id="default_2" width="40" height="128"></canvas>
+		<canvas id="default_3" width="40" height="128"></canvas>
+		<canvas id="default_4" width="40" height="128"></canvas>
+		<canvas id="default_5" width="40" height="128"></canvas>
+		<canvas id="default_6" width="40" height="128"></canvas>
+		<canvas id="default_7" width="40" height="128"></canvas>
+		<canvas id="default_8" width="40" height="128"></canvas>
+		<canvas id="default_9" width="40" height="128"></canvas>
+		<p>@2x files:</p>
+		<canvas id="hitcircle_2x" width="256" height="256"></canvas>
+		<canvas id="hitcircleoverlay_2x" width="256" height="256"></canvas>
+		<canvas id="default_0_2x" width="80" height="256"></canvas>
+		<canvas id="default_1_2x" width="80" height="256"></canvas>
+		<canvas id="default_2_2x" width="80" height="256"></canvas>
+		<canvas id="default_3_2x" width="80" height="256"></canvas>
+		<canvas id="default_4_2x" width="80" height="256"></canvas>
+		<canvas id="default_5_2x" width="80" height="256"></canvas>
+		<canvas id="default_6_2x" width="80" height="256"></canvas>
+		<canvas id="default_7_2x" width="80" height="256"></canvas>
+		<canvas id="default_8_2x" width="80" height="256"></canvas>
+		<canvas id="default_9_2x" width="80" height="256"></canvas>
+		<p>Unique files</p>
+		<canvas id="sliderendcircle_disabled" width="1" height="1"></canvas>
+	</div>
+</body>
+</html>

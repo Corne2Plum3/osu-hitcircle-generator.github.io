@@ -1,8 +1,20 @@
-/* material colors are awesome: https://material-ui.com/customization/color */
+@font-face {
+	font-family: 'Varela Round';
+	src: url("fonts/VarelaRound-Regular.ttf") format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Inconsolata';
+	src: src: url("fonts/Inconsolata.ttf") format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
 
 a {
 	text-decoration: none;
-	color: #2196f3;
+	color: #2196f3; /* material colors are awesome: https://material-ui.com/customization/color */
 }
 
 body {

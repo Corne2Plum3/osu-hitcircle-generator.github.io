@@ -393,10 +393,12 @@ function draw_centered_circle(canvas_name, border_size, cs, gradient_style, grad
 			// color1 = center ; color2 = out
 			gradient = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 1, (canvas.width)/2, (canvas.height)/2, cs);
 			gradient.addColorStop(0, color1);
-			gradient.addColorStop(1-(border_size/cs), color1);
+			if(border_size != 0) { /* don't add this color stop for filled circles */
+				gradient.addColorStop(1-(border_size/cs), color1);
+			}
 			gradient.addColorStop(1, color2);
 			break;
-		}
+	}
 			
 		/* 2. define strokeStyle, fillStyle and lineWidth */
 		if(border_size == 0){ // fill mode
@@ -457,7 +459,7 @@ function draw_centered_circle(canvas_name, border_size, cs, gradient_style, grad
 			ctx.stroke();
 		}
 		ctx.closePath();
-	}
+}
 
 function draw_overlay(canvas_name) { /* draw the overlay */
 	// get border size

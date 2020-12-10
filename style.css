@@ -1,68 +1,101 @@
-@font-face {
-	font-family: 'Varela Round';
-	src: url("fonts/VarelaRound-Regular.ttf") format('truetype');
-	font-weight: normal;
-	font-style: normal;
+:root {
+	--background_1: #1a1a1a;
+	--background_2: #202020;
+	--background_3: #262626;
+	
+	 /* material colors are awesome: https://material-ui.com/customization/color */
+	--main_color_1: #00695f; /* shade = 500 */
+	--main_color_2: #009688;
+	--main_color_3: #33ab9f;
+	--main_color_A1: #14a37f;  /* shade = A400 */
+	--main_color_A2: #1de9b6;
+	--main_color_A3: #4aedc4;
+
+	--red: #f44336;
+	--yellow: #ffc107;
+	--text_color: #EEEEEE;
+	
+	--input_bd: #000000;
+	--input_bg: #111111;
+	
+	--canvas_bg: #333333;
+	
+	--font_sans_serif: "Varela Round", sans-serif;
+	--font_monospace: "Inconsolata", "Consolas", monospace;
 }
 
 @font-face {
-	font-family: 'Inconsolata';
-	src: src: url("fonts/Inconsolata.ttf") format('truetype');
-	font-weight: normal;
-	font-style: normal;
+    font-family: 'Varela Round';
+    src: url('fonts/VarelaRound-Regular.woff2') format('woff2'),
+         url('fonts/VarelaRound-Regular.woff') format('woff'),
+         url('fonts/VarelaRound-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Inconsolata';
+    src: url('fonts/Inconsolata-VariableFontwdthwght.woff2') format('woff2'),
+         url('fonts/Inconsolata-VariableFontwdthwght.woff') format('woff'),
+         url('fonts/Inconsolata-VariableFont_wdth\,wght.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 a {
 	text-decoration: none;
-	color: #2196f3; /* material colors are awesome: https://material-ui.com/customization/color */
+	color: #2196f3;
 }
 
 body {
-	color: #EEE;
-	background-color: #1a1a1a;
+	color: var(--text_color);
+	background-color: var(--background_1);
 	font-family: "Varela Round", sans-serif;
 	font-size: 15px;
 }
 
 canvas {
-	background-color: #333;
+	background-color: var(--canvas_bg);
 	border-radius: 3px;
 }
 
 code {
-	background-color: #1a1a1a;
-	color: #DDD;
-	font-family: Inconsolata, Consolas, monospace;
+	background-color: var(--background_1);
+	color: #CCC;
+	font-family: var(--font_monospace);
 	padding: 3px;
 	border-radius: 3px;
 }
 
 details {
 	border-radius: 4px;
-	background-color: #202020;
+	background-color: var(--background_2);
 	margin: 8px;
 }
 
 h2 {
-	color: #EEE;
 	font-size: 28px;
 	text-decoration: underline;
 }
 
 h3 {
-	color: #33ab9f;
+	color: var(--main_color_3);
 	font-size: 20px;
 	font-weight: normal;
 }
 
-label {
+input, select, option {
+	font-family: var(--font_sans_serif);
 	font-size: 15px;
+	color: var(--text_color);
+}
+
+label {
 	line-height: 2.0;
 }
 
 li {
-	color: #EEEEEE;
-	font-size: 15px;
 	line-height: 1.6;
 	padding: 4px;
 }
@@ -71,9 +104,7 @@ ol, ul {
 	padding-left: 24px;
 }
 
-p{
-	color: #EEEEEE;
-	font-size: 15px;
+p {
 	line-height: 1.3;
 }
 
@@ -85,10 +116,10 @@ summary {
 	font-weight: bold;
 }
 
-/* EDITOR STYLES */
+/* --- CSS OF THE CONTAINER AT THE TOP OF THE PAGE --- */
 
-.top_container {
-	background-color: #009688;
+.top_container { /* the box at the top of the page) */
+	background-color: var(--main_color_2);
 	display: flex;
 	flex-direction: row;
 	position: absolute;
@@ -121,26 +152,28 @@ summary {
 	margin-left: 16px;
 	margin-right: 16px;
 	padding: 8px;
-	color: #EEE;
 	border-radius: 3px;
+	color: var(--text_color);
 }
 
 .top_container_option:hover {
-	background: #33ab9f;
+	background: var(--main_color_3);
 }
 
 .top_container_current_option { /* the current page */
 	text-decoration: underline;
 	text-decoration-style: dashed;
-	text-decoration-color: #1de9b6;
+	text-decoration-color: var(--main_color_A3);
 }
 
-.editor_container_textbox { /* when you have some text and 1 text input */
+/* --- CSS OF THE EDITOR --- */
+
+.editor_container_textbox { /* skin name + author name text and input */
 	padding: 8px;
 	margin-right: 8px;
 }
 
-.editor_container_3 { /* 3rd box of the editor_top, on th right */
+.editor_container_3 { /* 3rd box of the editor_top, on the right with the reset button */
 	text-align: right;
 	align-items: right;
 	flex: 1;
@@ -153,32 +186,29 @@ summary {
 	background-color: #ff1744;
 	border: 1px solid #ff1744;
 	border-radius: 3px;
-	font-family: "Varela Round", sans-serif;
 	font-weight: bold;
-	font-size: 16px;
 	padding: 3px;
 	width: 100px;
 	text-align: center;
 	align-items: center;
 	box-shadow: 0px 3px 3px black;
+	font-size: 16px;
 }
 
 .reset_button:hover {
-	border: 1px solid #ff616f;
-	background-color: #ff616f;
+	border: 1px solid #ff4569;
+	background-color: #ff4569;
 }
 
 .view_settings { /* the box where thre is ALL controls settings */
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	background-color: #262626;
-	border: 0px solid #262626;
+	background-color: var(--background_3);
 	border-radius: 3px;
 	padding: 6px;
 	margin-top: 4px;
 	align-items: center;
-	
 }
 
 .view_settings_color { /* the box with display color */
@@ -186,29 +216,23 @@ summary {
 	vertical-align: middle;
 	text-align: center;
 	line-height: 2.2;
-	font-size: 15px;
 }
 
 .view_settings_numbers { /* the box with display number */
 	vertical-align: middle;
 	text-align: center;
 	line-height: 2.2;
-	font-size: 15px;
 }
 
 .view_settings_background { /* the box who can change the background to display */
 	vertical-align: middle;
 	line-height: 2.2;
-	font-size: 15px;
 }
 
 .view_combo_number_input { /* the number input of the number */
-	background-color: #111;
-	border: 1px solid #000;
+	background-color: var(--input_bg);
+	border: 1px solid var(--input_bd);
 	border-radius: 3px;
-	color: #EEEEEE;
-	font-family: "Varela Round", sans-serif;
-	font-size: 15px;
 	padding: 2px;
 	vertical-align: middle;
 	width: 60px;
@@ -216,8 +240,8 @@ summary {
 }
 
 .view_combo_color_input { /* for input in view settings type=color */
-	background-color: #111;
-	border: 1px solid #000;
+	background-color: var(--input_bg);
+	border: 1px solid var(--input_bd);
 	border-radius: 3px;
 	padding-bottom: 0px;
 	vertical-align: middle;
@@ -228,8 +252,8 @@ summary {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	background-color: #262626;
-	border: 0px solid #262626;
+	background-color: var(--background_3);
+	border: 0px solid var(--background_3);
 	border-radius: 3px;
 	padding: 6px;
 	align-items: center;
@@ -249,7 +273,7 @@ summary {
 
 .view_combo_1 { /* the box with 1 color + his button */
 	font-size: 18px;
-	color: #EEE;
+	color: var(--text_color);
 	margin-top: 8px;
 	display: flex;
 	flex-direction: column;
@@ -259,8 +283,8 @@ summary {
 }
 
 .view_custom_color_change { /* custom the color picker of the custom combo */
-	background-color: #111;
-	border: 1px solid #000;
+	background-color: var(--input_bg);
+	border: 1px solid var(--input_bd);
 	border-radius: 3px;
 	padding-bottom: 0px;
 	vertical-align: middle;
@@ -269,18 +293,17 @@ summary {
 }
 
 .view_custom_color_set { /* custom the button below the color picker to set the combo color */
-	background-color: #1a1a1a;
-	border: 1px solid #000;
+	background-color: var(--input_bg);
+	border: 1px solid var(--input_bd);
 	border-radius: 3px;
 	padding-bottom: 0px;
 	vertical-align: middle;
 	width: 56px;
 	text-align: left;
-	font-family: "Varela Round", sans-serif;
 	text-align: center;
 	font-size: 11px;
 	line-height: 1.6;
-	color: #EEEEEE;
+	color: var(--text_color);
 }
 
 .view_number_combo_color { /* the box with the 2 buttons whp set the amount of combo colors */
@@ -291,18 +314,15 @@ summary {
 }
 
 .view_set_number_colors { /* the buttons who can change the amount of combo colors */
-	background-color: #1a1a1a;
-	border: 1px solid #000;
+	background-color: var(--input_bg);
+	border: 1px solid var(--input_bd);
 	border-radius: 3px;
 	padding-bottom: 0px;
 	vertical-align: middle;
 	width: 120px;
 	text-align: left;
-	font-family: "Varela Round", sans-serif;
 	text-align: center;
-	font-size: 15px;
 	line-height: 1.6;
-	color: #EEEEEE;
 	margin: 6px;
 }
 
@@ -311,8 +331,7 @@ summary {
 	display: flex;
 	flex-direction: column;
 	flex-wrap: wrap;
-	background-color: #262626;
-	border: 0px solid #262626;
+	background-color: var(--background_3);
 	border-radius: 3px;
 	padding: 6px;
 	/* set the title */
@@ -325,14 +344,13 @@ summary {
 	display: flex;
 	flex-direction: column;
 	flex-wrap: wrap;
-	background-color: #1a1a1a;
-	border: 1px solid #111;
+	background-color: var(--background_1);
+	border: 1px solid var(--input_bd);
 	border-radius: 3px;
 	padding: 6px;
 	/* set the font */
 	font-family: "Inconsolata", "Consolas", monospace;
 	font-size: 13px;
-	color: #BBB;
 }
 
 .editor_section { /* a <div> who contains all contet of a spoiler (where there is the controls) */
@@ -347,27 +365,26 @@ summary {
 	margin-left: 6px;
 	margin-top: 6px;
 	padding: 6px;
-	border: 0px solid #262626;
-	background-color: #262626;
+	background-color: var(--background_3);
 	border-radius: 3px;
-	/* custom the title */
-	line-height: 1.3;
-	font-size: 16px;
-	color: #AAA;
 }
 
+.editor_part_title { /* title of a part of the editor */
+	line-height: 1.3;
+	font-size: 16px;
+	color: #AAAAAA;
+}
 .editor_content { /* where you have all of the controls */
 	padding: 0px;
 	margin: 0px;
-	font-size: 15px;
 	line-height: 2.2;
 	vertical-align: middle;
-	color: #EEEEEE;
+	color: var(--text_color);
 }
 
 .editor_input_color { /* for input in controls type=color */
-	background-color: #111;
-	border: 1px solid #000;
+	background-color: var(--input_bg);
+	border: 1px solid var(--input_bd);
 	border-radius: 3px;
 	padding-bottom: 0px;
 	vertical-align: middle;
@@ -375,32 +392,28 @@ summary {
 }
 
 .editor_input_number { /* for input in controls type=number */
-	background-color: #111;
-	border: 1px solid #000;
+	background-color: var(--input_bg);
+	border: 1px solid var(--input_bd);
 	border-radius: 3px;
-	color: #EEEEEE;
-	font-family: "Varela Round", sans-serif;
-	font-size: 15px;
+	color: var(--text_color);
 	padding: 2px;
 	width: 50px;
 }
 
 .editor_input_select { /* for input in controls type=select */
-	background-color: #111;
-	border: 1px solid #000;
+	background-color: var(--input_bg);
+	border: 1px solid var(--input_bd);
 	border-radius: 3px;
-	color: #EEEEEE;
-	font-family: "Varela Round", sans-serif;
-	font-size: 15px;
+	color: var(--text_color);
 	padding: 2px;
 	width: 150px;
 }
 
 .editor_input_text { /* for input in controls type=text */
-	background-color: #111;
-	border: 1px solid #000;
+	background-color: var(--input_bg);
+	border: 1px solid var(--input_bd);
 	border-radius: 3px;
-	color: #EEEEEE;
+	color: var(--text_color);
 	font-family: "Varela Round", sans-serif;
 	font-size: 15px;
 	padding: 2px;
@@ -408,20 +421,19 @@ summary {
 }
 
 .editor_input_number:invalid, .editor_input_select:invalid, .view_combo_number_input:invalid { /* if invalid input */
-	color: #f43;
+	color: var(--red);
 }
 
 .export_settings { /* set the box with export settings and button (and the title) */
 	display: flex;
 	flex-direction: column;
 	width: 320px;
-	background: #262626;
-	border: 0px solid #262626;
+	background: var(--background_2);
 	border-radius: 3px;
 	padding: 8px;
 	/* set the title */
 	line-height: 1.3;
-	color: #EEE;
+	color: var(--text_color);
 	font-size: 24px;
 	font-weight: bold;
 }
@@ -429,15 +441,15 @@ summary {
 .export_option { /* a line of a option */
 	font-size: 15px;
 	font-weight: normal;
-	color: #EEE;
+	color: var(--text_color);
 	line-height: 2.0;
 }
 
 .export_button { /* the button to create the skin */
 	padding: 3px;
-	color: #EEF7F7;
-	background-color: #009688;
-	border: 1px solid #009688;
+	color: var(--text_color);
+	background-color: var(--main_color_2);
+	border: 1px solid var(--main_color_2);
 	border-radius: 3px;
 	font-family: "Varela Round", sans-serif;
 	font-weight: bold;
@@ -451,8 +463,8 @@ summary {
 }
 
 .export_button:hover {
-	border: 1px solid #33ab9f;
-	background-color: #33ab9f;
+	border: 1px solid var(--main_color_3);
+	background-color: var(--main_color_3);
 }
 
 #hitcircle_preview { /* the canvas preview */
@@ -473,7 +485,7 @@ summary {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	background-color: #202020;
+	background-color: var(--background_2);
 	border-radius: 3px;
 }
 
@@ -498,19 +510,17 @@ summary {
 }
 
 #help_container_left {
-	background-color: #262626;
+	background-color: var(--background_3);
 	text-align: left;
 	margin-right: 8px;
 	border-radius: 3px;
 	padding: 8px;
 	flex: 1;
 	max-width: 300px;
-	text-wrap: normal;
-	
 }
 
 #help_container_right {
-	background-color: #202020;
+	background-color: var(--background_2);
 	border-radius: 3px;
 	padding: 8px;
 	flex: 4;
@@ -529,20 +539,20 @@ summary {
 }
 
 .caution { /* <div> who contains important informations */
-	color: #ffc107;
+	color: var(--yellow);
 }
 
 .important { /* <div> who contains VERY important information */
-	color: #f44336;
+	color: var(--red);
 }
 
 .information { /* <div> who contains some information */
-	color: #4aedc4;
+	color: var(--main_color_A3);
 }
 
 #mult_color_demo {
 	display: flex;
-	background-color: #262626;
+	background-color: var(--background_3);
 	border-radius: 3px;
 	align-items: center;
 	text-align: center;
@@ -557,15 +567,15 @@ summary {
 }
 
 #demo_input_color, #demo_combo_color {
-	background-color: #1a1a1a;
-	border: 0px solid #1a1a1a;
+	background-color: var(--background_1);
+	border: 0px solid var(--background_1);
 	border-radius: 3px;
 	width: 60px;
 }
 
 #demo_final_color {
-	background-color: #1a1a1a;
-	border: 2px solid #EEEEEE;
+	background-color: var(--background_3);
+	border: 2px solid var(--text_color);
 	border-radius: 3px;
 	width: 60px;
 	height: 25px;

@@ -58,7 +58,7 @@
 				</div>
 			</div>
 			<div class="view_combo_color"> <!-- Where there is all of the custom color -->
-				Combo colors
+				<span class="editor_part_title">Combo colors</span>
 				<div class="view_combo_all"> <!-- The box with all view_combo_1 <div> -->
 					<div id="custom_color_1" class="view_combo_1"> <!-- Color picker + button to choose this color to display (note: 1 = one color) -->
 						<div><input type="color" id="combo_1_color" value="#33FF99" onchange="update_all(1);" class="view_custom_color_change"></div>
@@ -99,7 +99,7 @@
 				</div>
 			</div>
 			<div class="view_skin_ini"> <!-- Where there is a part of the skin.ini -->
-				skin.ini
+				<span class="editor_part_title">skin.ini</span>
 				<div class="view_skin_ini_content" id="skin_ini_content">
 					<div>[General]</div>
 					<div>Name: <span id="ini_Name_value">???</span></div>
@@ -134,7 +134,7 @@
 				<summary>Overlay</summary>
 				<div class="editor_section"> <!-- All content of the spoiler should be in this <div> -->
 					<div class="editor_part">
-						Overlay properties
+						<span class="editor_part_title">Overlay properties</span>
 						<div class="editor_content">
 							Border size: <input type="number" id="overlay_border_size" min="1" max="100" step="1" onchange="update_all(0);" class="editor_input_number" required><br/>
 							3d effect:
@@ -149,7 +149,7 @@
 						</div>
 					</div>
 					<div class="editor_part">
-						Overlay color
+						<span class="editor_part_title">Overlay color</span>
 						<div class="editor_content">
 							<select name="overlay_gradient_style" id="overlay_gradient_style" onchange="update_all(1);" class="editor_input_select">
 								<option value="none">No gradient</option>
@@ -162,7 +162,7 @@
 						</div>
 					</div>
 					<div class="editor_part">
-						Overlay shadow
+						<span class="editor_part_title">Overlay shadow</span>
 						<div class="editor_content">
 							<select name="overlay_shadow_style" id="overlay_shadow_style" onchange="update_all(1);" class="editor_input_select">
 								<option value="none">No shadow</option>
@@ -179,7 +179,7 @@
 				<summary>Colored part</summary>
 				<div class="editor_section"> <!-- All content of the spoiler should be in this <div> -->
 					<div class="editor_part">
-						Background
+						<span class="editor_part_title">Background</span>
 						<div class="editor_content">
 							<select name="background_gradient_style" id="background_gradient_style" onchange="update_all(1);" class="editor_input_select">
 								<option value="none">No gradient</option>
@@ -192,7 +192,7 @@
 						</div>
 					</div>
 					<div class="editor_part">
-						Circle glow
+						<span class="editor_part_title">Circle glow</span>
 						<div class="editor_content">
 							<select name="background_shadow_style" id="background_shadow_style" onchange="update_all(1);" class="editor_input_select">
 								<option value="none">No glow</option>
@@ -204,7 +204,7 @@
 						</div>
 					</div>
 					<div class="editor_part">
-						Ring properties
+						<span class="editor_part_title">Ring properties</span>
 						<div class="editor_content">
 							<input type="checkbox" id="ring_enabled" onchange="update_all(1);">Draw the ring<br/>
 							Ring size: <input type="number" id="ring_size" min="0" max="255" step="1" onchange="update_all(0);" class="editor_input_number" required><br/>
@@ -212,7 +212,7 @@
 						</div>
 					</div>
 					<div class="editor_part">
-						Ring color
+						<span class="editor_part_title">Ring color</span>
 						<div class="editor_content">
 							<select name="ring_gradient_style" id="ring_gradient_style" onchange="update_all(1);" class="editor_input_select">
 								<option value="none">No gradient</option>
@@ -230,7 +230,7 @@
 				<summary>Numbers</summary>
 				<div class="editor_section"> <!-- All content of the spoiler should be in this <div> -->
 					<div class="editor_part">
-						Font
+						<span class="editor_part_title">Font</span>
 						<div class="editor_content">
 							Font: <input type="text" id="numbers_font_name" onchange="update_all(0);" class="editor_input_text"><br/>
 							Font size: <input type="number" id="numbers_font_size" min="0" max="255" step="1" onchange="update_all(0);" class="editor_input_number" required><br/>
@@ -238,7 +238,7 @@
 						</div>
 					</div>
 					<div class="editor_part">
-						Font position
+						<span class="editor_part_title">Font position</span>
 						<div class="editor_content">
 							<input type="checkbox" id="numbers_font_monospaced" onchange="update_all(1);">Monospaced font<br/>
 							Font spacing: <input type="number" id="numbers_spacing" min="-128" max="128" step="0" onchange="update_all(0);"class="editor_input_number" required><br/>
@@ -246,7 +246,7 @@
 						</div>
 					</div>
 					<div class="editor_part">
-						Font color
+						<span class="editor_part_title">Font color</span>
 						<div class="editor_content">
 							<select name="numbers_gradient_style" id="numbers_gradient_style" onchange="update_all(1);" class="editor_input_select">
 								<option value="none">No gradient</option>
@@ -259,7 +259,7 @@
 						</div>
 					</div>
 					<div class="editor_part">
-						Font shadow
+						<span class="editor_part_title">Font shadow</span>
 						<div class="editor_content">
 							<select name="numbers_shadow_style" id="numbers_shadow_style" onchange="update_all(1);" class="editor_input_select">
 								<option value="none">No shadow</option>
@@ -275,7 +275,7 @@
 	</div>
 	
 	<div class="export_settings"> <!-- where you can generate the file -->
-		Export settings
+		<span class="editor_part_title">Export settings</span>
 		<div class="export_option"><input type="checkbox" id="export_skin_ini">Export skin.ini</div>
 		<div class="export_option"><input type="checkbox" id="export_as_slider_circle">Export as slider circle</div>
 		<div class="export_option"><input type="checkbox" id="circle_at_sliderend">Circles at sliders end</div>

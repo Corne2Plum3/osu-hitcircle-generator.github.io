@@ -1,22 +1,26 @@
-// import librairies
-// import { saveAs } from 'file-saver';
-
 // global variables
-const hitcircle_size = 117; // size in px (1x ver.) of the whole hitcircle
+const hitcircle_size = 234; // radius in px (2x ver.) of the whole hitcircle
 var amount_combo_colors = 4; // the number of combo color (4-8)
+var editor_mode = 0; // 0=hitcircle ; 1=slider ; 2=number
+var preview_mode = 0; // 0=hitcircle ; 1=slider
 
 document.addEventListener('DOMContentLoaded', function(){ // when the page is loaded
 	init();
-	update_all(1);
+	toggle_editor_mode(0);
+	// update_all(1); ("toggle_editor_mode(0)" do that)
 	show_canvas_files(false); // hide all canvas files
 });
 
 /* INPUT FUNCTIONS */
 function init() { /* initialize the page by define default value */
+	/* display settings */
 	document.getElementById("display_number").value = 1;
 	document.getElementById("display_color").value = "#009688"; // same than combo_1_color
 	document.getElementById("display_background").value = "1";
+	document.getElementById("view_hitcircle").checked = true;
+	document.getElementById("view_slider").checked = false;
 	
+	/* combo colors */
 	document.getElementById("combo_1_color").value = "#4caf50";
 	document.getElementById("combo_2_color").value = "#009688";
 	document.getElementById("combo_3_color").value = "#2196f3";
@@ -26,41 +30,75 @@ function init() { /* initialize the page by define default value */
 	document.getElementById("combo_7_color").value = "#ffc107";
 	document.getElementById("combo_8_color").value = "#cddc39";
 	
-	document.getElementById("overlay_3d_effect").value = "0";
-	document.getElementById("overlay_border_size").value = 8;
-	document.getElementById("overlay_gradient_style").value = "none";
-	document.getElementById("overlay_gradient_direction").value = 0;
-	document.getElementById("overlay_color_1").value = "#FFFFFF";
-	document.getElementById("overlay_alpha_1").value = 100;
-	document.getElementById("overlay_color_2").value = "#EEEEEE";
-	document.getElementById("overlay_alpha_2").value = 100;
-	document.getElementById("overlay_shadow_style").value = "in/out";
-	document.getElementById("overlay_shadow_blur").value = 6;
-	document.getElementById("overlay_shadow_color").value = "#000000";
-	document.getElementById("overlay_shadow_alpha").value = 100;
+	/* hitcircle */
+	document.getElementById("hitcircle_overlay_3d_effect").value = "0";
+	document.getElementById("hitcircle_overlay_border_size").value = 16;
+	document.getElementById("hitcircle_overlay_gradient_style").value = "none";
+	document.getElementById("hitcircle_overlay_gradient_direction").value = 0;
+	document.getElementById("hitcircle_overlay_color_1").value = "#FFFFFF";
+	document.getElementById("hitcircle_overlay_alpha_1").value = 100;
+	document.getElementById("hitcircle_overlay_color_2").value = "#EEEEEE";
+	document.getElementById("hitcircle_overlay_alpha_2").value = 100;
+	document.getElementById("hitcircle_overlay_shadow_style").value = "in/out";
+	document.getElementById("hitcircle_overlay_shadow_blur").value = 6;
+	document.getElementById("hitcircle_overlay_shadow_color").value = "#000000";
+	document.getElementById("hitcircle_overlay_shadow_alpha").value = 100;
+	document.getElementById("hitcircle_background_gradient_style").value = "none";
+	document.getElementById("hitcircle_background_gradient_direction").value = 0;
+	document.getElementById("hitcircle_background_color_1").value = "#707070";
+	document.getElementById("hitcircle_background_alpha_1").value = 70;
+	document.getElementById("hitcircle_background_color_2").value = "#999999";
+	document.getElementById("hitcircle_background_alpha_2").value = 70;
+	document.getElementById("hitcircle_background_shadow_style").value = "none";
+	document.getElementById("hitcircle_background_shadow_blur").value = 8;
+	document.getElementById("hitcircle_background_shadow_color").value = "#FFFFFF";
+	document.getElementById("hitcircle_background_shadow_alpha").value = 100;
+	document.getElementById("hitcircle_ring_enabled").checked = false;
+	document.getElementById("hitcircle_ring_gradient_style").value = "none"
+	document.getElementById("hitcircle_ring_size").value = 192; // diameter in px (in 2x)
+	document.getElementById("hitcircle_ring_border_size").value = 16; // in px
+	document.getElementById("hitcircle_ring_gradient_direction").value = 180;
+	document.getElementById("hitcircle_ring_gradient_direction").value = 0;
+	document.getElementById("hitcircle_ring_color_1").value = "#EEEEEE";
+	document.getElementById("hitcircle_ring_alpha_1").value = 100;
+	document.getElementById("hitcircle_ring_color_2").value = "#D0D0D0";
+	document.getElementById("hitcircle_ring_alpha_2").value = 100;
 	
-	document.getElementById("background_gradient_style").value = "none";
-	document.getElementById("background_gradient_direction").value = 0;
-	document.getElementById("background_color_1").value = "#707070";
-	document.getElementById("background_alpha_1").value = 75;
-	document.getElementById("background_color_2").value = "#999999";
-	document.getElementById("background_alpha_2").value = 75;
-	document.getElementById("background_shadow_style").value = "none";
-	document.getElementById("background_shadow_blur").value = 8;;
-	document.getElementById("background_shadow_color").value = "#FFFFFF";
-	document.getElementById("background_shadow_alpha").value = 100;
-
-	document.getElementById("ring_enabled").checked = false;
-	document.getElementById("ring_gradient_style").value = "none"
-	document.getElementById("ring_size").value = 96; // diameter in px (in 1x)
-	document.getElementById("ring_border_size").value = 8; // in px
-	document.getElementById("ring_gradient_direction").value = 180;
-	document.getElementById("ring_gradient_direction").value = 0;
-	document.getElementById("ring_color_1").value = "#EEEEEE";
-	document.getElementById("ring_alpha_1").value = 100;
-	document.getElementById("ring_color_2").value = "#D0D0D0";
-	document.getElementById("ring_alpha_2").value = 100;
+	/* slider */
+	document.getElementById("slider_overlay_3d_effect").value = "0";
+	document.getElementById("slider_overlay_border_size").value = 16;
+	document.getElementById("slider_overlay_gradient_style").value = "linear";
+	document.getElementById("slider_overlay_gradient_direction").value = -28;
+	document.getElementById("slider_overlay_color_1").value = "#FC6D9C";
+	document.getElementById("slider_overlay_alpha_1").value = 100;
+	document.getElementById("slider_overlay_color_2").value = "#FFD25B";
+	document.getElementById("slider_overlay_alpha_2").value = 100;
+	document.getElementById("slider_overlay_shadow_style").value = "in/out";
+	document.getElementById("slider_overlay_shadow_blur").value = 6;
+	document.getElementById("slider_overlay_shadow_color").value = "#000000";
+	document.getElementById("slider_overlay_shadow_alpha").value = 100;
+	document.getElementById("slider_background_gradient_style").value = "none";
+	document.getElementById("slider_background_gradient_direction").value = 0;
+	document.getElementById("slider_background_color_1").value = "#707070";
+	document.getElementById("slider_background_alpha_1").value = 85;
+	document.getElementById("slider_background_color_2").value = "#999999";
+	document.getElementById("slider_background_alpha_2").value = 85;
+	document.getElementById("slider_background_shadow_style").value = "none";
+	document.getElementById("slider_background_shadow_blur").value = 8;
+	document.getElementById("slider_background_shadow_color").value = "#FFFFFF";
+	document.getElementById("slider_background_shadow_alpha").value = 100;
+	document.getElementById("slider_ring_enabled").checked = false;
+	document.getElementById("slider_ring_gradient_style").value = "none"
+	document.getElementById("slider_ring_size").value = 192; // diameter in px (in 2x)
+	document.getElementById("slider_ring_border_size").value = 16; // in px
+	document.getElementById("slider_ring_gradient_direction").value = 180;
+	document.getElementById("slider_ring_gradient_direction").value = 0;
+	document.getElementById("slider_ring_color_1").value = "#EEEEEE";
+	document.getElementById("slider_ring_alpha_1").value = 100;
+	document.getElementById("slider_ring_color_2").value = "#D0D0D0";
+	document.getElementById("slider_ring_alpha_2").value = 100;
 	
+	/* numbers */
 	document.getElementById("numbers_font_name").value = "Varela Round";
 	document.getElementById("numbers_font_size").value = 56;
 	document.getElementById("numbers_spacing").value = 0;
@@ -95,44 +133,86 @@ function check_values(part) { /* verify if all of the elements have good values 
 		return validity; // if all of them is valid is valid, returns true, else returns false...
 	}
 	
-	function check_form_overlay(){
+	function check_form_hitcircle_overlay(){
 		var validity = (
-			document.getElementById("overlay_border_size").checkValidity() &&
-			document.getElementById("overlay_3d_effect").checkValidity() &&
-			document.getElementById("overlay_gradient_style").checkValidity() && 
-			document.getElementById("overlay_gradient_direction").checkValidity() && 
-			document.getElementById("overlay_color_1").checkValidity() && 
-			document.getElementById("overlay_color_2").checkValidity() && 
-			document.getElementById("overlay_alpha_1").checkValidity() && 
-			document.getElementById("overlay_alpha_2").checkValidity() && 
-			document.getElementById("overlay_shadow_style").checkValidity() && 
-			document.getElementById("overlay_shadow_blur").checkValidity() && 
-			document.getElementById("overlay_shadow_color").checkValidity() && 
-			document.getElementById("overlay_shadow_alpha").checkValidity()
+			document.getElementById("hitcircle_overlay_border_size").checkValidity() &&
+			document.getElementById("hitcircle_overlay_3d_effect").checkValidity() &&
+			document.getElementById("hitcircle_overlay_gradient_style").checkValidity() && 
+			document.getElementById("hitcircle_overlay_gradient_direction").checkValidity() && 
+			document.getElementById("hitcircle_overlay_color_1").checkValidity() && 
+			document.getElementById("hitcircle_overlay_color_2").checkValidity() && 
+			document.getElementById("hitcircle_overlay_alpha_1").checkValidity() && 
+			document.getElementById("hitcircle_overlay_alpha_2").checkValidity() && 
+			document.getElementById("hitcircle_overlay_shadow_style").checkValidity() && 
+			document.getElementById("hitcircle_overlay_shadow_blur").checkValidity() && 
+			document.getElementById("hitcircle_overlay_shadow_color").checkValidity() && 
+			document.getElementById("hitcircle_overlay_shadow_alpha").checkValidity()
 		);
 		return validity;
 	}
 	
-	function check_form_colored_part(){
+	function check_form_hitcircle_colored_part(){
 		var validity = (
-			document.getElementById("background_gradient_style").checkValidity() && 
-			document.getElementById("background_gradient_direction").checkValidity() &&
-			document.getElementById("background_color_1").checkValidity() && 
-			document.getElementById("background_color_2").checkValidity() && 
-			document.getElementById("background_alpha_1").checkValidity() && 
-			document.getElementById("background_alpha_2").checkValidity() && 
-			document.getElementById("background_shadow_style").checkValidity() && 
-			document.getElementById("background_shadow_blur").checkValidity() && 
-			document.getElementById("background_shadow_color").checkValidity() && 
-			document.getElementById("background_shadow_alpha").checkValidity() && 
-			document.getElementById("ring_size").checkValidity() &&
-			document.getElementById("ring_border_size").checkValidity() &&
-			document.getElementById("ring_gradient_style").checkValidity() && 
-			document.getElementById("ring_gradient_direction").checkValidity() && 
-			document.getElementById("ring_color_1").checkValidity() && 
-			document.getElementById("ring_color_2").checkValidity() && 
-			document.getElementById("ring_alpha_1").checkValidity() && 
-			document.getElementById("ring_alpha_2").checkValidity()
+			document.getElementById("hitcircle_background_gradient_style").checkValidity() && 
+			document.getElementById("hitcircle_background_gradient_direction").checkValidity() &&
+			document.getElementById("hitcircle_background_color_1").checkValidity() && 
+			document.getElementById("hitcircle_background_color_2").checkValidity() && 
+			document.getElementById("hitcircle_background_alpha_1").checkValidity() && 
+			document.getElementById("hitcircle_background_alpha_2").checkValidity() && 
+			document.getElementById("hitcircle_background_shadow_style").checkValidity() && 
+			document.getElementById("hitcircle_background_shadow_blur").checkValidity() && 
+			document.getElementById("hitcircle_background_shadow_color").checkValidity() && 
+			document.getElementById("hitcircle_background_shadow_alpha").checkValidity() && 
+			document.getElementById("hitcircle_ring_size").checkValidity() &&
+			document.getElementById("hitcircle_ring_border_size").checkValidity() &&
+			document.getElementById("hitcircle_ring_gradient_style").checkValidity() && 
+			document.getElementById("hitcircle_ring_gradient_direction").checkValidity() && 
+			document.getElementById("hitcircle_ring_color_1").checkValidity() && 
+			document.getElementById("hitcircle_ring_color_2").checkValidity() && 
+			document.getElementById("hitcircle_ring_alpha_1").checkValidity() && 
+			document.getElementById("hitcircle_ring_alpha_2").checkValidity()
+		);
+		return validity;
+	}
+	
+	function check_form_slider_overlay(){
+		var validity = (
+			document.getElementById("slider_overlay_border_size").checkValidity() &&
+			document.getElementById("slider_overlay_3d_effect").checkValidity() &&
+			document.getElementById("slider_overlay_gradient_style").checkValidity() && 
+			document.getElementById("slider_overlay_gradient_direction").checkValidity() && 
+			document.getElementById("slider_overlay_color_1").checkValidity() && 
+			document.getElementById("slider_overlay_color_2").checkValidity() && 
+			document.getElementById("slider_overlay_alpha_1").checkValidity() && 
+			document.getElementById("slider_overlay_alpha_2").checkValidity() && 
+			document.getElementById("slider_overlay_shadow_style").checkValidity() && 
+			document.getElementById("slider_overlay_shadow_blur").checkValidity() && 
+			document.getElementById("slider_overlay_shadow_color").checkValidity() && 
+			document.getElementById("slider_overlay_shadow_alpha").checkValidity()
+		);
+		return validity;
+	}
+	
+	function check_form_slider_colored_part(){
+		var validity = (
+			document.getElementById("slider_background_gradient_style").checkValidity() && 
+			document.getElementById("slider_background_gradient_direction").checkValidity() &&
+			document.getElementById("slider_background_color_1").checkValidity() && 
+			document.getElementById("slider_background_color_2").checkValidity() && 
+			document.getElementById("slider_background_alpha_1").checkValidity() && 
+			document.getElementById("slider_background_alpha_2").checkValidity() && 
+			document.getElementById("slider_background_shadow_style").checkValidity() && 
+			document.getElementById("slider_background_shadow_blur").checkValidity() && 
+			document.getElementById("slider_background_shadow_color").checkValidity() && 
+			document.getElementById("slider_background_shadow_alpha").checkValidity() && 
+			document.getElementById("slider_ring_size").checkValidity() &&
+			document.getElementById("slider_ring_border_size").checkValidity() &&
+			document.getElementById("slider_ring_gradient_style").checkValidity() && 
+			document.getElementById("slider_ring_gradient_direction").checkValidity() && 
+			document.getElementById("slider_ring_color_1").checkValidity() && 
+			document.getElementById("slider_ring_color_2").checkValidity() && 
+			document.getElementById("slider_ring_alpha_1").checkValidity() && 
+			document.getElementById("slider_ring_alpha_2").checkValidity()
 		);
 		return validity;
 	}
@@ -161,76 +241,194 @@ function check_values(part) { /* verify if all of the elements have good values 
 	switch(part){
 		case 1:
 			valid = check_form_display();
+			break;
 		case 2:
-			valid = check_form_overlay();
+			valid = check_form_hitcircle_overlay();
+			valid = check_form_slider_overlay();
+			break;
 		case 3:
-			valid = check_form_colored_part();
+			valid = check_form_hitcircle_colored_part();
+			valid = check_form_slider_colored_part();
+			break;
 		case 4:
 			valid = check_form_numbers();
-		default:
-			valid = check_form_display() && check_form_overlay() && check_form_colored_part() && check_form_numbers();
+			break;
+		default: // check all
+			valid = check_form_display() && check_form_hitcircle_overlay() && check_form_hitcircle_colored_part() && check_form_slider_overlay() && check_form_slider_colored_part() && check_form_numbers();
+			break;
 	}
 	return valid;
+}
+
+function toggle_editor_mode(mode){ /* change the editor mode & change the appearance of the buttons mode (execute "update_all(1);"" btw) */
+	
+	// the CSS properties to apply to the selected mode button
+	const color_selected = "var(--main_color_2)";
+	const borderb_selected = "3px solid var(--main_color_2)";
+	const color_no_selected = "var(--text-color)";
+	const borderb_no_selected = "0px solid var(--main_color_2)";
+	editor_mode = mode; // change the global variable
+	
+	/* change preview circle mode if needed and the radio */
+	switch(mode) {
+		case 0:
+			preview_mode = 0;
+			document.getElementById("view_hitcircle").checked = true;
+			document.getElementById("view_slider").checked = false;
+			break;
+		case 1:
+			preview_mode = 1;
+			document.getElementById("view_hitcircle").checked = false;
+			document.getElementById("view_slider").checked = true;
+			break;
+		// nothing to do with mode 2 (numbers)
+	}
+	
+	/* change displayed settings */
+	switch(mode){
+		case 0: // hitcircle mode
+			document.getElementById("editor_hitcircle").hidden = false;
+			document.getElementById("editor_slider").hidden = true;
+			document.getElementById("editor_numbers").hidden = true;
+			document.getElementById("button_mode_hitcircle").style.color = color_selected;
+			document.getElementById("button_mode_hitcircle").style.borderBottom = borderb_selected;
+			document.getElementById("button_mode_slider").style.color = color_no_selected;
+			document.getElementById("button_mode_slider").style.borderBottom = borderb_no_selected;
+			document.getElementById("button_mode_numbers").style.color = color_no_selected;
+			document.getElementById("button_mode_numbers").style.borderBottom = borderb_no_selected;
+			break;
+		case 1: // slider mode
+			document.getElementById("editor_hitcircle").hidden = true;
+			document.getElementById("editor_slider").hidden = false;
+			document.getElementById("editor_numbers").hidden = true;
+			document.getElementById("button_mode_hitcircle").style.color = color_no_selected;
+			document.getElementById("button_mode_hitcircle").style.borderBottom = borderb_no_selected;
+			document.getElementById("button_mode_slider").style.color = color_selected;
+			document.getElementById("button_mode_slider").style.borderBottom = borderb_selected;
+			document.getElementById("button_mode_numbers").style.color = color_no_selected;
+			document.getElementById("button_mode_numbers").style.borderBottom = borderb_no_selected;
+			document.getElementById("view_hitcircle").checked = false;
+			document.getElementById("view_slider").checked = true;
+			break;
+		case 2: // numbers mode
+			document.getElementById("editor_hitcircle").hidden = true;
+			document.getElementById("editor_slider").hidden = true;
+			document.getElementById("editor_numbers").hidden = false;
+			document.getElementById("button_mode_hitcircle").style.color = color_no_selected;
+			document.getElementById("button_mode_hitcircle").style.borderBottom = borderb_no_selected;
+			document.getElementById("button_mode_slider").style.color = color_no_selected;
+			document.getElementById("button_mode_slider").style.borderBottom = borderb_no_selected;
+			document.getElementById("button_mode_numbers").style.color = color_selected;
+			document.getElementById("button_mode_numbers").style.borderBottom = borderb_selected;
+			break;
+	}
+	
+	update_all(1);
+	
 }
 
 function update_all(execute_manage_hidden_inputs) { /* update the hidden values of some elements + orgazise the drawings */
 	
 	function manage_hidden_inputs() { /* manage the case if a element should be hidden or not */
 		const opacity_disabled = 0.1; // value of disabled elements
-		var t; // test who true = should be disabled
+		var t; // test which if true = should be disabled
 		
 		/* GD = gradient direction ; CA2 = color+alpha 2 ; SH = shadow blur + color */
-		// overlay color
-		t = (document.getElementById("overlay_gradient_style").value == "none" || document.getElementById("overlay_gradient_style").value == "radial");
-		document.getElementById("overlay_gradient_direction").disabled = t;
-		document.getElementById("span_overlay_GD").style.opacity = 1 - (t * (1 - opacity_disabled));
-		t = (document.getElementById("overlay_gradient_style").value == "none");
-		document.getElementById("overlay_color_2").disabled = t;
-		document.getElementById("overlay_color_2").disabled = t;
-		document.getElementById("span_overlay_CA2").style.opacity = 1 - (t * (1 - opacity_disabled));
-		// overlay shadow
-		t = (document.getElementById("overlay_shadow_style").value == "none");
-		document.getElementById("overlay_shadow_blur").disabled = t;
-		document.getElementById("overlay_shadow_color").disabled = t;
-		document.getElementById("overlay_shadow_alpha").disabled = t;
-		document.getElementById("span_overlay_SH").style.opacity = 1 - (t * (1 - opacity_disabled));
-		// background
-		t = (document.getElementById("background_gradient_style").value == "none" || document.getElementById("background_gradient_style").value == "radial");
-		document.getElementById("background_gradient_direction").disabled = t;
-		document.getElementById("span_background_GD").style.opacity = 1 - (t * (1 - opacity_disabled));
-		t = (document.getElementById("background_gradient_style").value == "none");
-		document.getElementById("background_color_2").disabled = t;
-		document.getElementById("background_color_2").disabled = t;
-		document.getElementById("span_background_CA2").style.opacity = 1 - (t * (1 - opacity_disabled));
-		// circle glow ("background shadow")
-		t = (document.getElementById("background_shadow_style").value == "none");
-		document.getElementById("background_shadow_blur").disabled = t;
-		document.getElementById("background_shadow_color").disabled = t;
-		document.getElementById("background_shadow_alpha").disabled = t;
-		document.getElementById("span_background_SH").style.opacity = 1 - (t * (1 - opacity_disabled));
-		// ring color
-		t = (document.getElementById("ring_gradient_style").value == "none" || document.getElementById("ring_gradient_style").value == "radial");
-		document.getElementById("ring_gradient_direction").disabled = t;
-		document.getElementById("span_ring_GD").style.opacity = 1 - (t * (1 - opacity_disabled));
-		t = (document.getElementById("ring_gradient_style").value == "none");
-		document.getElementById("ring_color_2").disabled = t;
-		document.getElementById("ring_color_2").disabled = t;
-		document.getElementById("span_ring_CA2").style.opacity = 1 - (t * (1 - opacity_disabled));
-		// font color
-		t = (document.getElementById("numbers_gradient_style").value == "none" || document.getElementById("numbers_gradient_style").value == "radial");
-		document.getElementById("numbers_gradient_direction").disabled = t;
-		document.getElementById("span_numbers_GD").style.opacity = 1 - (t * (1 - opacity_disabled));
-		t = (document.getElementById("numbers_gradient_style").value == "none");
-		document.getElementById("numbers_color_2").disabled = t;
-		document.getElementById("numbers_color_2").disabled = t;
-		document.getElementById("span_numbers_CA2").style.opacity = 1 - (t * (1 - opacity_disabled));
-		// font shadow
-		t = (document.getElementById("numbers_shadow_style").value == "none");
-		document.getElementById("numbers_shadow_blur").disabled = t;
-		document.getElementById("numbers_shadow_color").disabled = t;
-		document.getElementById("numbers_shadow_alpha").disabled = t;
-		document.getElementById("span_numbers_SH").style.opacity = 1 - (t * (1 - opacity_disabled));
-		
+		switch(editor_mode) {
+			case 0: // hitcircle
+				// overlay color
+				t = (document.getElementById("hitcircle_overlay_gradient_style").value == "none" || document.getElementById("hitcircle_overlay_gradient_style").value == "radial");
+				document.getElementById("hitcircle_overlay_gradient_direction").disabled = t;
+				document.getElementById("span_hitcircle_overlay_GD").style.opacity = 1 - (t * (1 - opacity_disabled));
+				t = (document.getElementById("hitcircle_overlay_gradient_style").value == "none");
+				document.getElementById("hitcircle_overlay_color_2").disabled = t;
+				document.getElementById("hitcircle_overlay_alpha_2").disabled = t;
+				document.getElementById("span_hitcircle_overlay_CA2").style.opacity = 1 - (t * (1 - opacity_disabled));
+				// overlay shadow
+				t = (document.getElementById("hitcircle_overlay_shadow_style").value == "none");
+				document.getElementById("hitcircle_overlay_shadow_blur").disabled = t;
+				document.getElementById("hitcircle_overlay_shadow_color").disabled = t;
+				document.getElementById("hitcircle_overlay_shadow_alpha").disabled = t;
+				document.getElementById("span_hitcircle_overlay_SH").style.opacity = 1 - (t * (1 - opacity_disabled));
+				// background
+				t = (document.getElementById("hitcircle_background_gradient_style").value == "none" || document.getElementById("hitcircle_background_gradient_style").value == "radial");
+				document.getElementById("hitcircle_background_gradient_direction").disabled = t;
+				document.getElementById("span_hitcircle_background_GD").style.opacity = 1 - (t * (1 - opacity_disabled));
+				t = (document.getElementById("hitcircle_background_gradient_style").value == "none");
+				document.getElementById("hitcircle_background_color_2").disabled = t;
+				document.getElementById("hitcircle_background_alpha_2").disabled = t;
+				document.getElementById("span_hitcircle_background_CA2").style.opacity = 1 - (t * (1 - opacity_disabled));
+				// circle glow ("background shadow")
+				t = (document.getElementById("hitcircle_background_shadow_style").value == "none");
+				document.getElementById("hitcircle_background_shadow_blur").disabled = t;
+				document.getElementById("hitcircle_background_shadow_color").disabled = t;
+				document.getElementById("hitcircle_background_shadow_alpha").disabled = t;
+				document.getElementById("span_hitcircle_background_SH").style.opacity = 1 - (t * (1 - opacity_disabled));
+				// ring color
+				t = (document.getElementById("hitcircle_ring_gradient_style").value == "none" || document.getElementById("hitcircle_ring_gradient_style").value == "radial");
+				document.getElementById("hitcircle_ring_gradient_direction").disabled = t;
+				document.getElementById("span_hitcircle_ring_GD").style.opacity = 1 - (t * (1 - opacity_disabled));
+				t = (document.getElementById("hitcircle_ring_gradient_style").value == "none");
+				document.getElementById("hitcircle_ring_color_2").disabled = t;
+				document.getElementById("hitcircle_ring_alpha_2").disabled = t;
+				document.getElementById("span_hitcircle_ring_CA2").style.opacity = 1 - (t * (1 - opacity_disabled));
+				break;
+			case 1: // slider
+				// overlay color
+				t = (document.getElementById("slider_overlay_gradient_style").value == "none" || document.getElementById("slider_overlay_gradient_style").value == "radial");
+				document.getElementById("slider_overlay_gradient_direction").disabled = t;
+				document.getElementById("span_slider_overlay_GD").style.opacity = 1 - (t * (1 - opacity_disabled));
+				t = (document.getElementById("slider_overlay_gradient_style").value == "none");
+				document.getElementById("slider_overlay_color_2").disabled = t;
+				document.getElementById("slider_overlay_alpha_2").disabled = t;
+				document.getElementById("span_slider_overlay_CA2").style.opacity = 1 - (t * (1 - opacity_disabled));
+				// overlay shadow
+				t = (document.getElementById("slider_overlay_shadow_style").value == "none");
+				document.getElementById("slider_overlay_shadow_blur").disabled = t;
+				document.getElementById("slider_overlay_shadow_color").disabled = t;
+				document.getElementById("slider_overlay_shadow_alpha").disabled = t;
+				document.getElementById("span_slider_overlay_SH").style.opacity = 1 - (t * (1 - opacity_disabled));
+				// background
+				t = (document.getElementById("slider_background_gradient_style").value == "none" || document.getElementById("slider_background_gradient_style").value == "radial");
+				document.getElementById("slider_background_gradient_direction").disabled = t;
+				document.getElementById("span_slider_background_GD").style.opacity = 1 - (t * (1 - opacity_disabled));
+				t = (document.getElementById("slider_background_gradient_style").value == "none");
+				document.getElementById("slider_background_color_2").disabled = t;
+				document.getElementById("slider_background_alpha_2").disabled = t;
+				document.getElementById("span_slider_background_CA2").style.opacity = 1 - (t * (1 - opacity_disabled));
+				// circle glow ("background shadow")
+				t = (document.getElementById("slider_background_shadow_style").value == "none");
+				document.getElementById("slider_background_shadow_blur").disabled = t;
+				document.getElementById("slider_background_shadow_color").disabled = t;
+				document.getElementById("slider_background_shadow_alpha").disabled = t;
+				document.getElementById("span_slider_background_SH").style.opacity = 1 - (t * (1 - opacity_disabled));
+				// ring color
+				t = (document.getElementById("slider_ring_gradient_style").value == "none" || document.getElementById("slider_ring_gradient_style").value == "radial");
+				document.getElementById("slider_ring_gradient_direction").disabled = t;
+				document.getElementById("span_slider_ring_GD").style.opacity = 1 - (t * (1 - opacity_disabled));
+				t = (document.getElementById("slider_ring_gradient_style").value == "none");
+				document.getElementById("slider_ring_color_2").disabled = t;
+				document.getElementById("slider_ring_alpha_2").disabled = t;
+				document.getElementById("span_slider_ring_CA2").style.opacity = 1 - (t * (1 - opacity_disabled));
+				break;
+			case 2: // numbers
+				// font color
+				t = (document.getElementById("numbers_gradient_style").value == "none" || document.getElementById("numbers_gradient_style").value == "radial");
+				document.getElementById("numbers_gradient_direction").disabled = t;
+				document.getElementById("span_numbers_GD").style.opacity = 1 - (t * (1 - opacity_disabled));
+				t = (document.getElementById("numbers_gradient_style").value == "none");
+				document.getElementById("numbers_color_2").disabled = t;
+				document.getElementById("numbers_color_2").disabled = t;
+				document.getElementById("span_numbers_CA2").style.opacity = 1 - (t * (1 - opacity_disabled));
+				// font shadow
+				t = (document.getElementById("numbers_shadow_style").value == "none");
+				document.getElementById("numbers_shadow_blur").disabled = t;
+				document.getElementById("numbers_shadow_color").disabled = t;
+				document.getElementById("numbers_shadow_alpha").disabled = t;
+				document.getElementById("span_numbers_SH").style.opacity = 1 - (t * (1 - opacity_disabled));
+				break;
+			}
+			
 		/* combo colors 5-8 & combo -1/+1 buttons */
 		t = (amount_combo_colors < 5);
 		document.getElementById("remove_combo_color").disabled = t;
@@ -251,15 +449,21 @@ function update_all(execute_manage_hidden_inputs) { /* update the hidden values 
 		document.getElementById("add_combo_color").style.opacity = 1 - (t * (1 - opacity_disabled));
 	}
 	
-	if(execute_manage_hidden_inputs){
+	if(execute_manage_hidden_inputs){ // execute manage input
 		manage_hidden_inputs();
 	}
-	
+
 	if(check_values(0)){ // if all of the values are valid
 		draw_all_circles();
 	}
 	
 	update_skin_ini();
+}
+
+function set_preview_mode(m) { /* set the var preview_mode with radiobuttons */
+	preview_mode = m;
+	update_all(1);
+	draw_preview();
 }
 
 function set_display_color_combo(c) { /* (used by combo buttons) set the display_color to combo_color_c */
@@ -291,6 +495,7 @@ function reset_editor(need_to_confirm) { /* reset all input from the editor */
 }
 
 function show_canvas_files(yes) { /* show or hide the <div> with all canvas files */
+	// can be used only with this command typed on the console
 	document.getElementById("all_canvas_files").hidden = !yes;
 }
 
@@ -461,19 +666,39 @@ function draw_centered_circle(canvas_name, border_size, cs, gradient_style, grad
 		ctx.closePath();
 }
 
-function draw_overlay(canvas_name) { /* draw the overlay */
-	// get border size
-	var border_size = parseInt(document.getElementById("overlay_border_size").value) * 2;
-	// get main colors
-	var c1 = document.getElementById("overlay_color_1").value + hex_2_digits(Math.round(document.getElementById("overlay_alpha_1").value*2.55));
-	var c2 = document.getElementById("overlay_color_2").value + hex_2_digits(Math.round(document.getElementById("overlay_alpha_2").value*2.55));
-	var gradient_style = document.getElementById("overlay_gradient_style").value;
-	var gradient_direction = parseInt(document.getElementById("overlay_gradient_direction").value);
-	// get shadow blur & color
-	var shadow_blur = parseInt(document.getElementById("overlay_shadow_blur").value);
-	var shadow_color = document.getElementById("overlay_shadow_color").value + hex_2_digits(Math.round(document.getElementById("overlay_shadow_alpha").value*2.55));
-	var shadow_style = document.getElementById("overlay_shadow_style").value;
-	var effect_3d = document.getElementById("overlay_3d_effect").value;
+function draw_overlay(canvas_name, element) { /* draw the overlay */
+	// element: 0=hitcircle ; 1=slider
+	/* get inputs */
+	switch(element) {
+		case 0: // circle
+			// get border size
+			var border_size = parseInt(document.getElementById("hitcircle_overlay_border_size").value);
+			// get main colors
+			var c1 = document.getElementById("hitcircle_overlay_color_1").value + hex_2_digits(Math.round(document.getElementById("hitcircle_overlay_alpha_1").value*2.55));
+			var c2 = document.getElementById("hitcircle_overlay_color_2").value + hex_2_digits(Math.round(document.getElementById("hitcircle_overlay_alpha_2").value*2.55));
+			var gradient_style = document.getElementById("hitcircle_overlay_gradient_style").value;
+			var gradient_direction = parseInt(document.getElementById("hitcircle_overlay_gradient_direction").value);
+			// get shadow blur & color
+			var shadow_blur = parseInt(document.getElementById("hitcircle_overlay_shadow_blur").value);
+			var shadow_color = document.getElementById("hitcircle_overlay_shadow_color").value + hex_2_digits(Math.round(document.getElementById("hitcircle_overlay_shadow_alpha").value*2.55));
+			var shadow_style = document.getElementById("hitcircle_overlay_shadow_style").value;
+			var effect_3d = document.getElementById("hitcircle_overlay_3d_effect").value;
+			break;
+		case 1: // slider
+			// get border size
+			var border_size = parseInt(document.getElementById("slider_overlay_border_size").value);
+			// get main colors
+			var c1 = document.getElementById("slider_overlay_color_1").value + hex_2_digits(Math.round(document.getElementById("slider_overlay_alpha_1").value*2.55));
+			var c2 = document.getElementById("slider_overlay_color_2").value + hex_2_digits(Math.round(document.getElementById("slider_overlay_alpha_2").value*2.55));
+			var gradient_style = document.getElementById("slider_overlay_gradient_style").value;
+			var gradient_direction = parseInt(document.getElementById("slider_overlay_gradient_direction").value);
+			// get shadow blur & color
+			var shadow_blur = parseInt(document.getElementById("slider_overlay_shadow_blur").value);
+			var shadow_color = document.getElementById("slider_overlay_shadow_color").value + hex_2_digits(Math.round(document.getElementById("slider_overlay_shadow_alpha").value*2.55));
+			var shadow_style = document.getElementById("slider_overlay_shadow_style").value;
+			var effect_3d = document.getElementById("slider_overlay_3d_effect").value;
+			break;
+	}
 	
 	/* draw */
 	// 3d effect
@@ -487,9 +712,9 @@ function draw_overlay(canvas_name) { /* draw the overlay */
 	}
 	// circle
 	draw_centered_circle(
-		"hitcircleoverlay_2x", /* canvas */
+		canvas_name, /* canvas */
 		border_size, /* border size */
-		hitcircle_size, /* circle radius */
+		hitcircle_size/2, /* circle radius */
 		gradient_style, /* gradient style */
 		gradient_direction, /* gradient direction */
 		c1, /* color 1 */
@@ -500,31 +725,52 @@ function draw_overlay(canvas_name) { /* draw the overlay */
 	);
 }
 
-function draw_colored_part(canvas_name, apply_color) { /* draw the colored part */
+function draw_colored_part(canvas_name, element, apply_color) { /* draw the colored part */
+	// element: 0=hitcircle ; 1=slider
 	// apply_color: (bool) apply the display color
-	var draw_ring = document.getElementById("ring_enabled").checked;
+
 	/* 1. Background */
 	// get colors
-	if(apply_color == true){ // apply display color
-		var c1 = prod_colors(document.getElementById("background_color_1").value, document.getElementById("display_color").value) + hex_2_digits(Math.round(document.getElementById("background_alpha_1").value*2.55));
-		var c2 = prod_colors(document.getElementById("background_color_2").value, document.getElementById("display_color").value) + hex_2_digits(Math.round(document.getElementById("background_alpha_2").value*2.55));
-		var shadow_color = prod_colors(document.getElementById("background_shadow_color").value, document.getElementById("display_color").value) + hex_2_digits(Math.round(document.getElementById("background_shadow_alpha").value*2.55));
-	} else { // don't apply
-		var c1 = document.getElementById("background_color_1").value + hex_2_digits(Math.round(document.getElementById("background_alpha_1").value*2.55));
-		var c2 = document.getElementById("background_color_2").value + hex_2_digits(Math.round(document.getElementById("background_alpha_2").value*2.55));
-		var shadow_color = document.getElementById("background_shadow_color").value + hex_2_digits(Math.round(document.getElementById("background_shadow_alpha").value*2.55));
+	switch(element) {
+		case 0: // circle
+			if(apply_color == true) { // apply display color
+				var c1 = prod_colors(document.getElementById("hitcircle_background_color_1").value, document.getElementById("display_color").value) + hex_2_digits(Math.round(document.getElementById("hitcircle_background_alpha_1").value*2.55));
+				var c2 = prod_colors(document.getElementById("hitcircle_background_color_2").value, document.getElementById("display_color").value) + hex_2_digits(Math.round(document.getElementById("hitcircle_background_alpha_2").value*2.55));
+				var shadow_color = prod_colors(document.getElementById("hitcircle_background_shadow_color").value, document.getElementById("display_color").value) + hex_2_digits(Math.round(document.getElementById("hitcircle_background_shadow_alpha").value*2.55));
+			} else { // don't apply
+				var c1 = document.getElementById("hitcircle_background_color_1").value + hex_2_digits(Math.round(document.getElementById("hitcircle_background_alpha_1").value*2.55));
+				var c2 = document.getElementById("hitcircle_background_color_2").value + hex_2_digits(Math.round(document.getElementById("hitcircle_background_alpha_2").value*2.55));
+				var shadow_color = document.getElementById("hitcircle_background_shadow_color").value + hex_2_digits(Math.round(document.getElementById("hitcircle_background_shadow_alpha").value*2.55));
+			}
+			var gradient_style = document.getElementById("hitcircle_background_gradient_style").value;
+			var gradient_direction = parseInt(document.getElementById("hitcircle_background_gradient_direction").value);
+			// get shadow blur & color (the glow)
+			var shadow_blur = parseInt(document.getElementById("hitcircle_background_shadow_blur").value);
+			var shadow_style = document.getElementById("hitcircle_background_shadow_style").value;
+			break;
+		case 1: // slider
+			if(apply_color == true){ // apply display color
+				var c1 = prod_colors(document.getElementById("slider_background_color_1").value, document.getElementById("display_color").value) + hex_2_digits(Math.round(document.getElementById("slider_background_alpha_1").value*2.55));
+				var c2 = prod_colors(document.getElementById("slider_background_color_2").value, document.getElementById("display_color").value) + hex_2_digits(Math.round(document.getElementById("slider_background_alpha_2").value*2.55));
+				var shadow_color = prod_colors(document.getElementById("slider_background_shadow_color").value, document.getElementById("display_color").value) + hex_2_digits(Math.round(document.getElementById("slider_background_shadow_alpha").value*2.55));
+			} else { // don't apply
+				var c1 = document.getElementById("slider_background_color_1").value + hex_2_digits(Math.round(document.getElementById("slider_background_alpha_1").value*2.55));
+				var c2 = document.getElementById("slider_background_color_2").value + hex_2_digits(Math.round(document.getElementById("slider_background_alpha_2").value*2.55));
+				var shadow_color = document.getElementById("slider_background_shadow_color").value + hex_2_digits(Math.round(document.getElementById("slider_background_shadow_alpha").value*2.55));
+			}
+			var gradient_style = document.getElementById("slider_background_gradient_style").value;
+			var gradient_direction = parseInt(document.getElementById("slider_background_gradient_direction").value);
+			// get shadow blur & color (the glow)
+			var shadow_blur = parseInt(document.getElementById("slider_background_shadow_blur").value);
+			var shadow_style = document.getElementById("slider_background_shadow_style").value;
+			break;
 	}
-	var gradient_style = document.getElementById("background_gradient_style").value;
-	var gradient_direction = parseInt(document.getElementById("background_gradient_direction").value);
-	// get shadow blur & color (the glow)
-	var shadow_blur = parseInt(document.getElementById("background_shadow_blur").value);
-	var shadow_style = document.getElementById("background_shadow_style").value;
 	
 	/* draw */
 	draw_centered_circle(
 		canvas_name, /* canvas */
 		0, /* border size (0 = filled circle) */
-		hitcircle_size-0.5, /* circle radius */
+		hitcircle_size/2-0.5, /* circle radius */
 		gradient_style, /* gradient style */
 		gradient_direction, /* gradient direction */
 		c1, /* color 1 */
@@ -535,20 +781,48 @@ function draw_colored_part(canvas_name, apply_color) { /* draw the colored part 
 	);
 	
 	/* 2. Ring (colored) */
-	if(draw_ring == true){
-		// get colors
-		if(apply_color == true){ // apply display color
-			var c1 = prod_colors(document.getElementById("ring_color_1").value, document.getElementById("display_color").value) + hex_2_digits(Math.round(document.getElementById("ring_alpha_1").value*2.55));
-			var c2 = prod_colors(document.getElementById("ring_color_2").value, document.getElementById("display_color").value) + hex_2_digits(Math.round(document.getElementById("ring_alpha_2").value*2.55));
-		} else { // don't apply
-			var c1 = document.getElementById("ring_color_1").value + hex_2_digits(Math.round(document.getElementById("ring_alpha_1").value*2.55));
-			var c2 = document.getElementById("ring_color_2").value + hex_2_digits(Math.round(document.getElementById("ring_alpha_2").value*2.55));
+	switch(element) { // verify if the ring have to be drawn
+		case 0:
+			var draw_ring = document.getElementById("hitcircle_ring_enabled").checked;
+			break;
+		case 1:
+			var draw_ring = document.getElementById("slider_ring_enabled").checked;
+			break;
+	}
+	
+	if(draw_ring == true) {
+		switch(element) {
+			case 0:
+				// get colors
+				if(apply_color == true){ // apply display color
+					var c1 = prod_colors(document.getElementById("hitcircle_ring_color_1").value, document.getElementById("display_color").value) + hex_2_digits(Math.round(document.getElementById("hitcircle_ring_alpha_1").value*2.55));
+					var c2 = prod_colors(document.getElementById("hitcircle_ring_color_2").value, document.getElementById("display_color").value) + hex_2_digits(Math.round(document.getElementById("hitcircle_ring_alpha_2").value*2.55));
+				} else { // don't apply
+					var c1 = document.getElementById("hitcircle_ring_color_1").value + hex_2_digits(Math.round(document.getElementById("hitcircle_ring_alpha_1").value*2.55));
+					var c2 = document.getElementById("hitcircle_ring_color_2").value + hex_2_digits(Math.round(document.getElementById("hitcircle_ring_alpha_2").value*2.55));
+				}
+				var gradient_style = document.getElementById("hitcircle_ring_gradient_style").value;
+				var gradient_direction = document.getElementById("hitcircle_ring_gradient_direction").value;
+				// get radius & border size
+				var ring_radius = parseInt(document.getElementById("hitcircle_ring_size").value)/2; // radius
+				var ring_border_size = parseInt(document.getElementById("hitcircle_ring_border_size").value);
+				break;
+			case 1:
+				// get colors
+				if(apply_color == true){ // apply display color
+					var c1 = prod_colors(document.getElementById("slider_ring_color_1").value, document.getElementById("display_color").value) + hex_2_digits(Math.round(document.getElementById("slider_ring_alpha_1").value*2.55));
+					var c2 = prod_colors(document.getElementById("slider_ring_color_2").value, document.getElementById("display_color").value) + hex_2_digits(Math.round(document.getElementById("slider_ring_alpha_2").value*2.55));
+				} else { // don't apply
+					var c1 = document.getElementById("slider_ring_color_1").value + hex_2_digits(Math.round(document.getElementById("slider_ring_alpha_1").value*2.55));
+					var c2 = document.getElementById("slider_ring_color_2").value + hex_2_digits(Math.round(document.getElementById("slider_ring_alpha_2").value*2.55));
+				}
+				var gradient_style = document.getElementById("slider_ring_gradient_style").value;
+				var gradient_direction = document.getElementById("slider_ring_gradient_direction").value;
+				// get radius & border size
+				var ring_radius = parseInt(document.getElementById("slider_ring_size").value)/2; // radius
+				var ring_border_size = parseInt(document.getElementById("slider_ring_border_size").value);
+				break;
 		}
-		var gradient_style = document.getElementById("ring_gradient_style").value;
-		var gradient_direction = document.getElementById("ring_gradient_direction").value;
-		// get radius & border size
-		var ring_radius = parseInt(document.getElementById("ring_size").value); // radius
-		var ring_border_size = parseInt(document.getElementById("ring_border_size").value) * 2;
 		
 		// draw
 		draw_centered_circle(
@@ -570,15 +844,13 @@ function generate_numbers() { /* draw numbers in their canvas */
 	// get settings
 	var font_name = document.getElementById("numbers_font_name").value;
 	var font_size = document.getElementById("numbers_font_size").value * 2;
-	var font_spacing = document.getElementById("numbers_spacing").value * 2;
 	var correction_y = -(document.getElementById("numbers_correction_y").value * 2);
 	var monospaced_font = document.getElementById("numbers_font_monospaced").checked;
-	var display_number = document.getElementById("display_number").value;
 	// colors
 	var c1 = document.getElementById("numbers_color_1").value + hex_2_digits(Math.round(document.getElementById("numbers_alpha_1").value*2.55));
 	var c2 = document.getElementById("numbers_color_2").value + hex_2_digits(Math.round(document.getElementById("numbers_alpha_2").value*2.55));
 	var gradient_style = document.getElementById("numbers_gradient_style").value;
-	var gradient_direction = parseInt(document.getElementById("overlay_gradient_direction").value);
+	var gradient_direction = parseInt(document.getElementById("numbers_gradient_direction").value);
 	// shadow
 	var shadow_blur = parseInt(document.getElementById("numbers_shadow_blur").value);
 	var shadow_color = document.getElementById("numbers_shadow_color").value + hex_2_digits(Math.round(document.getElementById("numbers_shadow_alpha").value*2.55));
@@ -772,21 +1044,44 @@ function draw_preview() { /* draw the full hitcircle in the preview canvas */
 	}
 	
 	/* 2. colored part */
-	draw_colored_part("hitcircle_preview", true); // colored part, applying the combo color
+	switch(preview_mode) {
+		case 0:
+			draw_colored_part("hitcircle_preview", 0, true); // colored part, applying the combo color
+			break;
+		case 1:
+			if(document.getElementById("same_sliders_than_circles").checked == true) {
+				draw_colored_part("hitcircle_preview", 0, true);
+			} else {
+				draw_colored_part("hitcircle_preview", 1, true);
+			}
+			break;
+	}
+	
 	
 	/* 3. overlay + numbers */
-	if(numbers_behind_overlay == true){ // decides what will be drawn 1st
-		draw_numbers_preview(); // draw numbers
-		ctx.drawImage(document.getElementById("hitcircleoverlay_2x"), (canvas.width-256)/2, (canvas.height-256)/2); // copy the overlay
-	} else {
-		ctx.drawImage(document.getElementById("hitcircleoverlay_2x"), (canvas.width-256)/2, (canvas.height-256)/2); // the 256 is the overlay canvas size
-		draw_numbers_preview(); // draw number
+	switch(preview_mode) {
+		case 0: // hitcircle
+			if(numbers_behind_overlay == true){ // decides what will be drawn 1st
+				draw_numbers_preview(); // draw numbers
+				ctx.drawImage(document.getElementById("hitcircleoverlay_2x"), (canvas.width-256)/2, (canvas.height-256)/2); // copy the overlay
+			} else {
+				ctx.drawImage(document.getElementById("hitcircleoverlay_2x"), (canvas.width-256)/2, (canvas.height-256)/2); // the 256 is the overlay canvas size
+				draw_numbers_preview(); // draw number
+			}
+			break;
+		case 1:
+			if(numbers_behind_overlay == true){ // decides what will be drawn 1st
+				draw_numbers_preview(); // draw numbers
+				ctx.drawImage(document.getElementById("sliderstartcircleoverlay_2x"), (canvas.width-256)/2, (canvas.height-256)/2); // copy the overlay
+			} else {
+				ctx.drawImage(document.getElementById("sliderstartcircleoverlay_2x"), (canvas.width-256)/2, (canvas.height-256)/2); // the 256 is the overlay canvas size
+				draw_numbers_preview(); // draw number
+			}
+			break;
 	}
 }
 
 function draw_all_circles() { /* draw overlay + colored circle + numbers (generate files + preview) */
-	var hitcircle_size = 117; // size in px of the whole hitcircle (in 1x)
-	var numbers_behind_overlay = document.getElementById("numbers_behind_overlay").checked;
 	
 	// clear all canvas
 	document.getElementById("hitcircle_preview").getContext('2d').clearRect(0, 0, 256, 256);
@@ -794,22 +1089,51 @@ function draw_all_circles() { /* draw overlay + colored circle + numbers (genera
 	document.getElementById("hitcircleoverlay").getContext('2d').clearRect(0, 0, 128, 128);
 	document.getElementById("hitcircle_2x").getContext('2d').clearRect(0, 0, 256, 256);
 	document.getElementById("hitcircleoverlay_2x").getContext('2d').clearRect(0, 0, 256, 256);
+	document.getElementById("sliderstartcircle").getContext('2d').clearRect(0, 0, 128, 128);
+	document.getElementById("sliderstartcircleoverlay").getContext('2d').clearRect(0, 0, 128, 128);
+	document.getElementById("sliderstartcircle_2x").getContext('2d').clearRect(0, 0, 256, 256);
+	document.getElementById("sliderstartcircleoverlay_2x").getContext('2d').clearRect(0, 0, 256, 256);
 	
+	/* hitcircle canvas */
 	// create overlay canvas
 	// 2x
-	draw_overlay("hitcircleoverlay_2x");
+	draw_overlay("hitcircleoverlay_2x", 0); // hitcircle
 	// 1x
 	canvas = document.getElementById("hitcircleoverlay");
 	ctx = canvas.getContext("2d");
 	ctx.drawImage(document.getElementById("hitcircleoverlay_2x"), 0, 0, canvas.width, canvas.height);
-	
 	// create colored part canvas
 	// 2x
-	draw_colored_part("hitcircle_2x", false);
+	draw_colored_part("hitcircle_2x", 0, false);
 	// 1x
 	var canvas = document.getElementById("hitcircle");
 	var ctx = canvas.getContext("2d");
 	ctx.drawImage(document.getElementById("hitcircle_2x"), 0, 0, canvas.width, canvas.height); // copy
+	
+	/* slider head canvas */
+	// create overlay canvas
+	// 2x
+	if(document.getElementById("same_sliders_than_circles").checked == true) { // if circles must have the same appearance than hitcircle
+		draw_overlay("sliderstartcircleoverlay_2x", 0);
+	} else {
+		draw_overlay("sliderstartcircleoverlay_2x", 1);
+	}
+	// 1x
+	canvas = document.getElementById("sliderstartcircleoverlay");
+	ctx = canvas.getContext("2d");
+	ctx.drawImage(document.getElementById("sliderstartcircleoverlay_2x"), 0, 0, canvas.width, canvas.height);
+	
+	// create colored part canvas
+	// 2x
+	if(document.getElementById("same_sliders_than_circles").checked == true) {
+		draw_colored_part("sliderstartcircle_2x", 0, false);
+	} else {
+		draw_colored_part("sliderstartcircle_2x", 1, false);
+	}
+	// 1x
+	canvas = document.getElementById("sliderstartcircle");
+	ctx = canvas.getContext("2d");
+	ctx.drawImage(document.getElementById("sliderstartcircle_2x"), 0, 0, canvas.width, canvas.height); // copy
 	
 	// create numbers canvas
 	generate_numbers();
@@ -881,19 +1205,22 @@ function export_hitcircles() {
 	let jsZip = new JSZip(); // constructor for the ZIP
 	
 	/* images */
-	if(document.getElementById("export_as_slider_circle").checked == true) { // if start name by slider for circles
-		canvas_to_file("hitcircle", "sliderstartcircle.png"); // hitcircle (colored part)
-		canvas_to_file("hitcircle_2x", "sliderstartcircle@2x.png");
-		canvas_to_file("hitcircleoverlay", "sliderstartcircleoverlay.png"); // overlay
-		canvas_to_file("hitcircleoverlay_2x", "sliderstartcircleoverlay@2x.png");
-	} else {
-		canvas_to_file("hitcircle", "hitcircle.png"); // hitcircle (colored part)
-		canvas_to_file("hitcircle_2x", "hitcircle@2x.png");
-		canvas_to_file("hitcircleoverlay", "hitcircleoverlay.png"); // overlay
-		canvas_to_file("hitcircleoverlay_2x", "hitcircleoverlay@2x.png");
+	
+	// export hitcircles
+	canvas_to_file("hitcircle", "hitcircle.png"); // hitcircle (colored part)
+	canvas_to_file("hitcircle_2x", "hitcircle@2x.png");
+	canvas_to_file("hitcircleoverlay", "hitcircleoverlay.png"); // overlay
+	canvas_to_file("hitcircleoverlay_2x", "hitcircleoverlay@2x.png");
+	
+	// export slider heads
+	if(document.getElementById("same_sliders_than_circles").checked == false) { // if different slider heads and hitcircles
+		canvas_to_file("sliderstartcircle", "sliderstartcircle.png"); // hitcircle (colored part)
+		canvas_to_file("sliderstartcircle_2x", "sliderstartcircle@2x.png");
+		canvas_to_file("sliderstartcircleoverlay", "sliderstartcircleoverlay.png"); // overlay
+		canvas_to_file("sliderstartcircleoverlay_2x", "sliderstartcircleoverlay@2x.png");
 	}
 	
-	for(var i=0 ; i<=9 ; i++){ // default number
+	for(var i=0 ; i<=9 ; i++){ // default numbers
 		canvas_to_file("default_"+i.toString(), "default-"+i.toString()+".png");
 		canvas_to_file("default_"+i.toString()+"_2x", "default-"+i.toString()+"@2x.png");
 	}

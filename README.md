@@ -11,4 +11,6 @@ This site also includes a documentation (help.html).
 
 ## State of the project
 
-This is the beginning, so he have some bugs...
+Dead.
+
+The code is so shitty and needs to be rewritten. Also waiting the osu!lazer release to continue.
